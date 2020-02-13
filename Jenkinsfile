@@ -49,9 +49,10 @@ pipeline {
                             echo: 'caught error: $err'
                   }
                   withCredentials([usernamePassword(credentialsId: 'docker_hub_login', usernameVariable: 'DUSERNAME', passwordVariable: 'DUSERPASS')]{
-                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker login -u $DUSERNAME -p $DUSERPASS\"" 
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker login -u $DUSERNAME -p $DUSERPASS\""
+                        sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name trainschedule -p 8080:8080 -d carlosignaciom/trainschedule:${env.BUILD_NUMBER}\""  
                  }
-                 sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name trainschedule -p 8080:8080 -d carlosignaciom/trainschedule:${env.BUILD_NUMBER}\"" 
+                 
               }
               }
             
