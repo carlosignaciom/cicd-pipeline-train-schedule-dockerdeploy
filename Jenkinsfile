@@ -40,7 +40,11 @@ pipeline {
           steps{
               input 'Are you ready to go live?'
               milestone(1)
-              withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')], [usernamePassword(credentialsId: 'docker_hub_login', usernameVariable: 'DUSERNAME', passwordVariable: 'DUSERPASS')]) {
+              withCredentials([
+                 usernamePassword(credentialsId:'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS'),
+                 usernamePassword(credentialsId: 'docker_hub_login', usernameVariable: 'DUSERNAME', passwordVariable: 'DUSERPASS')
+              ]){
+              
               script{
                   try {
                       sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker stop trainschedule\""
@@ -48,7 +52,6 @@ pipeline {
                   } catch (err) {
                             echo: 'caught error: $err'
                   }
-                 
                         sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker login -u $DUSERNAME -p $DUSERPASS\""
                         sh "sshpass -p '$USERPASS' -v ssh -o StrictHostKeyChecking=no $USERNAME@$prod_ip \"docker run --restart always --name trainschedule -p 8080:8080 -d carlosignaciom/trainschedule:${env.BUILD_NUMBER}\""  
                  
