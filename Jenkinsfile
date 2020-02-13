@@ -38,7 +38,7 @@ pipeline {
               branch 'master'
            }
           steps{
-              input Are you ready to go live?
+              input 'Are you ready to go live?'
               milestone(1)
               withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
               script{
